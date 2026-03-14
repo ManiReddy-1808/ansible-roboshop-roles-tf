@@ -1,0 +1,31 @@
+plugin: amazon.aws.aws_ec2
+regions:
+- us-east-1
+hostnames:
+- private-ip-address
+filters:
+  instance-state-name: running
+  tag:Name: frontend-dev
+compose:
+  # This sets the ansible_host variable to connect with the private IP address without changing the hostname.
+  ansible_host: private_ip_address
+keyed_groups:
+- seperator: ''
+  # name of the group is frontend
+  key: tags.Name | regex_replace('-.*$', '')
+
+
+
+# To run this playbook
+  # ansible-inventory -i frontend.aws_ec2.yaml --list   # Bring all hosts present at that time
+# ansible-inventory -i frontend.aws_ec2.yaml -e component=frontend roboshop.yaml (dynamic inventory)
+
+
+# Dynamic inventory
+# =================
+# scaling environment, servers are dynamically created and destroyed based on traffic.. we cant use static inventory file, we need to dynamically query the instances. We can use dynamic inventory plugin from AWS passing region, name of the instances, runnning state, etc.
+
+
+# Vault
+# =====
+# ansible-vault create valut.yaml
